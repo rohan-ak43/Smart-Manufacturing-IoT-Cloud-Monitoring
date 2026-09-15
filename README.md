@@ -1,4 +1,4 @@
-Smart Manufacturing IoT Monitoring: Complete Technical Analysis
+## Smart Manufacturing IoT Monitoring: Complete Technical Analysis
 
 This document provides a complete technical analysis and step-by-step breakdown of assignment1_iot.ipynb from the GitHub repository rohan-ak43/Smart-Manufacturing-IoT-Cloud-Monitoring.
 

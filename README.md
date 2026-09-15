@@ -6,6 +6,7 @@ PART 1 — High-Level Overview
 
 In a smart factory, internet-connected sensors collect measurements continuously across machines and lines. Raw sensor streams must be processed and passed into machine learning models to enable automated monitoring, failure prediction, and continuous energy optimization.
 
+```text
 +---------------------------------------------------------------------------------+
 |                                RAW SENSOR STREAM                                |
 |    [Temperature]      [Humidity]      [Vibration]      [Energy Consumption]     |
@@ -27,6 +28,7 @@ In a smart factory, internet-connected sensors collect measurements continuously
 |  Metrics: MAE, MSE, R^2                  | |   Metrics: Accuracy, Precision, Recall,  |
 |                                          | |            F1-score                      |
 +------------------------------------------+ +------------------------------------------+
+```
 
 The Analytical Pipeline
 Dataset Ingestion: Raw sensor data (iot_telemetry_data.csv) is loaded into memory as a structured pandas.DataFrame.
@@ -155,6 +157,7 @@ Machine learning models require inputs in numeric matrix structures.
 
 Numerical vs. Categorical Variables
 
+```text
                               VARIABLES IN TELEMETRY DATA
                                            |
                     +----------------------+----------------------+
@@ -166,6 +169,7 @@ Numerical vs. Categorical Variables
                     |                                             |
                     v                                             v
          Direct Input to Models                      Requires Encoding (e.g. One-Hot)
+```
 
 Numerical Variables: Measured on continuous quantitative scales. Arithmetic operations (addition, scalar multiplication) are mathematically valid.
 Columns: temp, humidity, co, lpg, smoke, ts.
@@ -323,9 +327,11 @@ threshold = df['temp'].median(): Computes the median temperature across all samp
 df['temp'] > threshold: Generates a Boolean Series (True where temperature exceeds the median, False otherwise).
 .astype(int): Converts the Boolean values to binary integers (True -> 1, False -> 0).
 
+```text
 Continuous Target (temp)      Thresholding (> Median)     Binary Target (High_Temp)
        24.5 °C                ------------------------>             1 (High)
        19.2 °C                ------------------------>             0 (Normal)
+```
 
 This transformation sets up a binary classification problem, converting a continuous prediction task into a discrete state estimation task (e.g., predicting normal vs. elevated operational states).
 
@@ -533,11 +539,13 @@ What it does: Trains a Logistic Regression classifier, generates predictions, an
 
 PART 17 — Data Transformation Flow
 
+```text
 REGRESSION PIPELINE:
 Raw CSV -> df -> Feature Selection (X, y) -> train_test_split() -> X_train, X_test, y_train, y_test -> LinearRegression.fit() -> predict() -> Evaluate: MAE, MSE, R^2
 
 CLASSIFICATION PIPELINE:
 Raw DataFrame -> Target Construction (High_Temp) -> Feature Selection (X, y_class) -> train_test_split() -> X_train_c, X_test_c, y_train_c, y_test_c -> LogisticRegression.fit() -> predict() -> Evaluate: Acc, Prec, Rec, F1
+```
 
 PART 18 — Critical Evaluation and Potential Improvements
 

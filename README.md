@@ -30,7 +30,7 @@ In a smart factory, internet-connected sensors collect measurements continuously
 ```
 
 The Analytical Pipeline
-Dataset Ingestion: Raw sensor data (iot_telemetry_data.csv) is loaded into memory as a structured pandas.DataFrame.
+Dataset Ingestion: Raw sensor data (smart_manufacturing_data.csv) is loaded into memory as a structured pandas.DataFrame.
 Data Exploration: Statistical summaries and schema inspections check data dimensions, variable types, and distribution traits.
 Data Cleaning: Audits identify missing (NaN / null) values.
 Feature Identification & Selection: Predictor features (X) are separated from target variables (y).
@@ -41,14 +41,14 @@ Comparative Analysis: Regression and classification paradigms are compared to cl
 
 PART 2 — Dataset Architecture
 
-The repository uses the IoT telemetry dataset file iot_telemetry_data.csv.
+The repository uses the smart manufacturing dataset file smart_manufacturing_data.csv.
 
 Data Loading Syntax
 
 ```python
 import pandas as pd
 
-df = pd.read_csv("iot_telemetry_data.csv")
+df = pd.read_csv("smart_manufacturing_data.csv")
 ```
 
 pd: Standard alias for the pandas library.
@@ -57,9 +57,9 @@ df: The resulting pandas.DataFrame object.
 
 Data Terminology
 
-| Term | Definition | Example from iot_telemetry_data.csv |
+| Term | Definition | Example from smart_manufacturing_data.csv |
 |---|---|---|
-| Dataset | The complete collection of raw observations | The entire file iot_telemetry_data.csv |
+| Dataset | The complete collection of raw observations | The entire file smart_manufacturing_data.csv |
 | DataFrame | Two-dimensional, tabular, memory-resident data structure | The variable df |
 | Row / Sample | A single record representing one sensor reading moment | Row 0: ts = 1574518494.484, co = 0.00495, etc. |
 | Column | A named vertical slice containing values of one metric | temp column containing all temperature readings |
@@ -426,7 +426,7 @@ PART 15 — Scikit-Learn API Reference
 
 | Library / Module | Function / Class | Purpose in Pipeline |
 |---|---|---|
-| pandas | read_csv() | Imports iot_telemetry_data.csv into a DataFrame |
+| pandas | read_csv() | Imports smart_manufacturing_data.csv into a DataFrame |
 | pandas | DataFrame.isnull().sum() | Checks for missing (NaN) values across columns |
 | sklearn.model_selection | train_test_split() | Splits features and targets into training and testing sets |
 | sklearn.linear_model | LinearRegression | Fits a linear model for continuous target prediction |
@@ -446,7 +446,7 @@ Cell 1: Environment Ingestion and File Load
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv('iot_telemetry_data.csv')
+df = pd.read_csv('smart_manufacturing_data.csv')
 ```
 What it does: Imports libraries and loads the CSV dataset into memory.
 
@@ -568,7 +568,7 @@ Recommended Improvement: Ensure the feature used to create the target is exclude
 
 PART 19 — High-Level Assignment Summary
 
-"In this assignment, we build an end-to-end machine learning pipeline using Python and scikit-learn to analyze smart manufacturing IoT sensor data from iot_telemetry_data.csv.
+"In this assignment, we build an end-to-end machine learning pipeline using Python and scikit-learn to analyze smart manufacturing IoT sensor data from smart_manufacturing_data.csv.
 
 First, we load the raw sensor readings into a pandas.DataFrame and perform exploratory data analysis using .shape, .info(), .head(), and .describe(). This checks dataset dimensions, confirms data types, and verifies there are no missing (NaN) values across all 405,659 records.
 
@@ -583,7 +583,7 @@ Finally, we compare the two modeling approaches: regression predicts continuous 
 PART 20 — Viva / Interview Questions & Answers
 
 1. What is the overarching objective of this Jupyter Notebook?
-Answer: The notebook demonstrates an end-to-end machine learning pipeline on IoT telemetry data.
+Answer: The notebook demonstrates an end-to-end machine learning pipeline on smart manufacturing data.
 
 2. What library is used for data manipulation, and what does read_csv do?
 Answer: pandas is used for data manipulation. pd.read_csv() parses CSVs into a DataFrame.

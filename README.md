@@ -30,14 +30,23 @@ In a smart factory, internet-connected sensors collect measurements continuously
 ```
 
 The Analytical Pipeline
+
 Dataset Ingestion: Raw sensor data (smart_manufacturing_data.csv) is loaded into memory as a structured pandas.DataFrame.
+
 Data Exploration: Statistical summaries and schema inspections check data dimensions, variable types, and distribution traits.
+
 Data Cleaning: Audits identify missing (NaN / null) values.
+
 Feature Identification & Selection: Predictor features (X) are separated from target variables (y).
+
 Categorical Encoding: String labels are encoded into numeric values using pandas get_dummies.
+
 Train/Test Split: Data is split into training (model learning) and testing (out-of-sample evaluation) subsets.
+
 Regression Pipeline: A continuous target (energy_consumption) is modeled via LinearRegression and RandomForestRegressor, evaluated using MAE, MSE, RMSE, and R^2.
+
 Classification Pipeline: A binary target (maintenance_required) is modeled via LogisticRegression and evaluated using Accuracy, Precision, Recall, and F1-Score.
+
 Comparative Analysis: Regression and classification paradigms are compared to clarify why evaluation strategies differ by task type.
 
 PART 2 — Dataset Architecture
@@ -53,7 +62,9 @@ df = pd.read_csv("smart_manufacturing_data.csv")
 ```
 
 pd: Standard alias for the pandas library.
+
 pd.read_csv(): Parses a comma-separated text file, infers data types per column, and loads the data into an in-memory two-dimensional data structure.
+
 df: The resulting pandas.DataFrame object.
 
 Data Terminology
@@ -70,6 +81,7 @@ Data Terminology
 Telemetry Schema
 
 Total Rows: 100,000 samples
+
 Total Columns: 13 variables
 
 | Column Name | Data Type | Physical/Logical Meaning | Role in Modeling |
@@ -97,7 +109,9 @@ The notebook performs exploratory data analysis (EDA) to understand distribution
 ```python
 print(df.shape)
 ```
+
 Execution: Returns tuple (100000, 13).
+
 Meaning: The dataset contains 100,000 rows and 13 columns.
 
 2. Schema and Structural Inspection
@@ -105,7 +119,9 @@ Meaning: The dataset contains 100,000 rows and 13 columns.
 ```python
 df.info()
 ```
+
 Execution: Prints concise summaries including memory usage, non-null counts, column names, and pandas data types.
+
 Meaning: Verifies whether data types were correctly parsed during file ingestion.
 
 3. Quick Visual Verification
@@ -113,7 +129,9 @@ Meaning: Verifies whether data types were correctly parsed during file ingestion
 ```python
 df.head()
 ```
+
 Execution: Displays the first 5 records of the DataFrame.
+
 Meaning: Confirms data alignment, expected value ranges, and column header parsing.
 
 4. Null Value Quantification
@@ -121,7 +139,9 @@ Meaning: Confirms data alignment, expected value ranges, and column header parsi
 ```python
 df.isnull().sum()
 ```
+
 Execution: df.isnull() generates a boolean mask where missing cells return True. .sum() totals True values column-by-column.
+
 Meaning: Checks for data gaps resulting from sensor disconnects or dropped network packets.
 
 5. Summary Statistics
@@ -129,6 +149,7 @@ Meaning: Checks for data gaps resulting from sensor disconnects or dropped netwo
 ```python
 df.describe()
 ```
+
 Execution: Computes descriptive statistics for numeric columns.
 
 PART 4 — Missing Value Audit
@@ -139,7 +160,9 @@ print(df.isnull().sum())
 ```
 
 Technical Assessment
+
 Observed Result: Every column returns 0 missing values across all 100,000 records.
+
 Methodology: Because no null values are present, imputation functions are not executed.
 
 PART 5 — Variable Classification and Encoding
@@ -147,11 +170,15 @@ PART 5 — Variable Classification and Encoding
 Machine learning models require inputs in numeric matrix structures.
 
 Numerical Variables: Measured on continuous quantitative scales. Arithmetic operations are mathematically valid.
+
 Columns: temperature, vibration, humidity, pressure.
+
 ML Compatibility: Can be fed directly into regression/classification algorithms.
 
 Categorical Variables: Represent discrete groups, identifiers, or non-numeric strings.
+
 Columns: machine_status_label (derived from machine_status).
+
 ML Compatibility: Linear models cannot apply floating-point weights to raw strings. Categorical variables must be converted to numeric representations using methods like pd.get_dummies().
 
 PART 6 — Feature Selection and Extraction
@@ -169,8 +196,11 @@ X_encoded = pd.get_dummies(X, columns=categorical_features, drop_first=True)
 X_encoded (Feature Matrix): A 2D DataFrame containing encoded features.
 
 Excluded Features and Data Leakage Prevention
+
 timestamp: Excluded because raw times cause models to learn time-dependent trends rather than physical relationships.
+
 machine_id: Excluded to prevent the model from memorizing individual machines.
+
 y (Target Column): Excluded from X to eliminate Data Leakage.
 
 PART 7 — Train/Test Partitioning
@@ -186,10 +216,13 @@ Xr_train, Xr_test, yr_train, yr_test = train_test_split(
 ```
 
 Parameter Breakdown
+
 test_size=0.2: 20% of the data (20,000 rows) is reserved for testing, while 80% (80,000 rows) is used for training.
+
 random_state=42: Sets the pseudo-random seed to ensure reproducible splits across runs.
 
 Why Training and Testing Data Must Be Separated
+
 Evaluating a model on data it was trained on can hide overfitting. Performance on the testing split gives an unbiased estimate of how the model will perform on new data in production.
 
 PART 8 — Regression Modeling
@@ -205,11 +238,15 @@ yr_pred_lin = lin_reg.predict(Xr_test_s)
 ```
 
 Mathematical Foundations
+
 Linear regression assumes the target variable y is a linear combination of input features X:
+
 y_hat = b0 + b1*x1 + b2*x2 + ... + bn*xn
 
 Internal Operations of .fit() and .predict()
+
 .fit(Xr_train_s, yr_train): Computes the optimal coefficients.
+
 .predict(Xr_test_s): Multiplies the learned coefficient vector by the feature values in X_test to generate predictions.
 
 PART 9 — Regression Evaluation Metrics
@@ -219,8 +256,11 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 ```
 
 1. Mean Absolute Error (MAE): The average absolute difference between predicted and actual values.
+
 2. Mean Squared Error (MSE): The average of the squared prediction errors.
+
 3. Root Mean Squared Error (RMSE): The square root of the MSE, placing the error back into original units.
+
 4. Coefficient of Determination (R^2): The proportion of variance in the target variable explained by the model's features.
 
 PART 10 — Regression Metrics Comparison
@@ -261,6 +301,7 @@ yc_pred = log_reg.predict(Xc_test_s)
 ```
 
 Mathematical Foundations
+
 Logistic Regression models the probability that a given input belongs to the positive class using the sigmoid function: P(y=1|x) = 1 / (1 + e^-z)
 
 PART 13 — Classification Evaluation Metrics
@@ -273,8 +314,11 @@ Classification performance is evaluated using metrics derived from the Confusion
 | Predicted Positive | False Positive (FP): False alarm maintenance | True Positive (TP): Correctly detected maintenance need |
 
 1. Accuracy: Proportion of all predictions that were correct.
+
 2. Precision: Out of all cases predicted as positive, how many were actually positive?
+
 3. Recall: Out of all actual positive cases, how many were correctly detected?
+
 4. F1-Score: Harmonic mean of Precision and Recall.
 
 PART 14 — Comparing Regression and Classification
@@ -301,10 +345,15 @@ PART 15 — Scikit-Learn API Reference
 PART 16 — Sequential Cell Breakdown
 
 The Jupyter Notebook executes a complete ML pipeline following these sequential steps:
+
 1. Environment Ingestion: Imports libraries and loads `smart_manufacturing_data.csv`.
+
 2. Structural Verification & Audit: Checks dimensions, null values, and summary statistics.
+
 3. Feature Engineering: Encodes categorical variables using `pd.get_dummies`.
+
 4. Regression Task: Splits data to predict `energy_consumption`. Scales features using `StandardScaler`. Trains `LinearRegression` and `RandomForestRegressor`. Evaluates using MAE, MSE, RMSE, and R^2.
+
 5. Classification Task: Splits data to predict `maintenance_required` (with stratification). Scales features. Trains `LogisticRegression`. Evaluates using Accuracy, Precision, Recall, and F1-Score.
 
 PART 17 — Data Transformation Flow
@@ -320,8 +369,11 @@ Feature Selection (X, y_clf) -> Encoding (X_encoded) -> train_test_split(stratif
 PART 18 — Critical Evaluation and Potential Improvements
 
 Baseline Implementation Strengths
+
 Clear Pipeline: Follows a standard ML pipeline with feature scaling.
+
 Proper Data Splitting: Avoids training set leakage by evaluating on an independent out-of-sample test split.
+
 Class Imbalance Handling: Uses `stratify` in the train-test split and `class_weight='balanced'` in Logistic Regression.
 
 PART 19 — High-Level Assignment Summary
@@ -331,62 +383,121 @@ In this assignment, we build an end-to-end machine learning pipeline using Pytho
 PART 20 — Viva / Interview Questions & Answers
 
 1. What is the overarching objective of this Jupyter Notebook?
+
 Answer: The notebook demonstrates an end-to-end machine learning pipeline on smart manufacturing data.
+
 2. What library is used for data manipulation, and what does read_csv do?
+
 Answer: pandas is used for data manipulation. pd.read_csv() parses CSVs into a DataFrame.
+
 3. What is the difference between a pandas DataFrame and a Series?
+
 Answer: A DataFrame is a 2D tabular data structure; a Series is 1D.
+
 4. Why do we inspect df.isnull().sum() prior to model fitting?
+
 Answer: To check for missing values, which can cause ML algorithms to fail.
+
 5. What is the difference between numerical and categorical variables?
+
 Answer: Numerical variables are continuous quantities; categorical are discrete groups.
+
 6. What is pd.get_dummies used for?
+
 Answer: It applies One-Hot Encoding to convert categorical strings into numeric binary features.
+
 7. What is a feature matrix (X), and what is a target vector (y)?
+
 Answer: X contains the predictor variables; y is what the model tries to predict.
+
 8. What is data leakage?
+
 Answer: When information from outside the training dataset is accidentally used during training.
+
 9. Why do we split data into training and testing sets?
+
 Answer: To evaluate how well the model generalizes to unseen data.
+
 10. What does the random_state parameter control?
+
 Answer: It sets the seed for random operations, ensuring reproducibility.
+
 11. Why do we use StandardScaler?
+
 Answer: To normalize input features so they have a mean of 0 and a standard deviation of 1, improving model convergence.
+
 12. How does LinearRegression.fit() work?
+
 Answer: It uses Ordinary Least Squares to minimize squared residuals.
+
 13. What is Mean Absolute Error (MAE)?
+
 Answer: The average absolute difference between predicted and actual values.
+
 14. What is Mean Squared Error (MSE)?
+
 Answer: The average squared difference, which penalizes larger errors more heavily.
+
 15. How do you interpret an R^2 score of 0.85?
+
 Answer: 85% of the variance in the target is explained by the features.
+
 16. What is the regression target in this notebook?
+
 Answer: The continuous variable `energy_consumption`.
+
 17. What is the classification target?
+
 Answer: The binary variable `maintenance_required`.
+
 18. Why is Logistic Regression used for classification?
+
 Answer: It estimates class probabilities using the sigmoid function.
+
 19. What is the stratify parameter in train_test_split?
+
 Answer: It ensures the train and test sets have the same proportion of classes as the original dataset.
+
 20. Why do we use class_weight='balanced'?
+
 Answer: To adjust weights inversely proportional to class frequencies, addressing class imbalance.
+
 21. What is a Confusion Matrix?
+
 Answer: A table summarizing True Positives, True Negatives, False Positives, and False Negatives.
+
 22. What is a False Positive vs. False Negative?
+
 Answer: FP is a false alarm; FN is a missed detection.
+
 23. What is Precision?
+
 Answer: Accuracy of positive predictions (TP / (TP + FP)).
+
 24. What is Recall?
+
 Answer: Proportion of actual positives detected (TP / (TP + FN)).
+
 25. What is the F1-Score?
+
 Answer: The harmonic mean of Precision and Recall.
+
 26. Why can Accuracy be misleading?
+
 Answer: On imbalanced datasets, predicting the majority class gives high accuracy but poor actual performance.
+
 27. Why can't continuous regression tasks be evaluated using Accuracy?
+
 Answer: Exact numerical matches almost never occur.
+
 28. What is Random Forest?
+
 Answer: An ensemble algorithm that fits a number of decision tree classifiers/regressors on various sub-samples of the dataset.
+
 29. What is the shape of the dataset?
+
 Answer: 100,000 rows and 13 columns.
+
 30. How can this pipeline be deployed?
+
 Answer: Models can be saved (e.g., using joblib) and deployed as microservices to evaluate real-time telemetry.
